@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ShortLinkController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard');
+})->name('dashboard');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+
+
+    Route::get('/add-short-link', function () {
+        return view('link.add-short-link');
+    })->name('short-link');
+    Route::get('/import-csv', function () {
+        return view('link.import-csv');
+    })->name('import');
+
+    Route::controller(ShortLinkController::class)->group(function () {
+        Route::post('link/store', 'store')->name('link.store');
+        Route::get('/', 'index')->name('dashboard');
+        Route::post('/import/csv', 'importCsv')->name('import.csv');
+    });
+
+    Route::get('/custom/{shortURLKey}', '\AshAllenDesign\ShortURL\Controllers\ShortURLController')->name('custom');
 });
+require __DIR__ . '/auth.php';

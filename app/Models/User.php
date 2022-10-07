@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -19,6 +20,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'surname',
         'email',
         'password',
     ];
@@ -41,4 +43,24 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $appends = [
+        'fullName'
+    ];
+
+    /**
+     * @return HasMany
+     */
+    public function shortUrl(): HasMany
+    {
+        return $this->hasMany(ShortLink::class);
+    }
+
+    /**
+     * @return array|string|string[]|null
+     */
+    public function getFullNameAttribute(): array|string|null
+    {
+        return $this->name . ' ' . $this->surname;
+    }
 }
